@@ -1,0 +1,40 @@
+<!-- popup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Copier</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="js/popup.js"></script>
+
+</head>
+<body>
+  <div id="wallet-container">
+    <header>
+      <h1>Connected Wallets</h1>
+    </header>
+    <!-- Add this inside the <body> tag of your popup.html -->
+<div id="wallet-overview">
+    <ul id="wallet-list">
+      <!-- Connected wallets will be listed here -->
+    </ul>
+    <button id="add-wallet">Add Wallet</button>
+  </div>
+  <div id="add-wallet-form" style="display:none;">
+    <input type="text" id="wallet-address-input" placeholder="Enter wallet address">
+    <button id="save-wallet">Save Wallet</button>
+  </div>
+  
+    <div id="wallets-list">
+      <!-- Dynamic list of wallets will be populated here -->
+    </div>
+    <button id="add-wallet">Add Wallet</button>
+    <div id="settings-container">
+      <button id="configure">Configure</button>
+      <!-- Insert additional settings here -->
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
