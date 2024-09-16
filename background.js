@@ -1,36 +1,41 @@
 // background.js
 
-const ws = new WebSocket('wss://solana-devnet.g.alchemy.com/v2/SiV6ILyj3Kx6DQ9x6Xbppb-74J3eI9w8');
+// Connect to Ethereum WebSocket provider (replace with your Alchemy or Infura WebSocket URL)
+const ws = new WebSocket('wss://eth-mainnet.alchemyapi.io/v2/yourAlchemyAPIKey'); // Replace with your Alchemy API key
 
 ws.onopen = () => {
-  console.log('WebSocket connection established with Alchemy Solana node');
+  console.log('WebSocket connection established with Ethereum node');
 
-  // Construct and send a subscription message to monitor a specified account
-  const subscribeToAccount = JSON.stringify({
+  // Subscribe to logs for a specific account (leader wallet address)
+  const subscribeToLogs = JSON.stringify({
     "jsonrpc": "2.0",
     "id": 1,
-    "method": "accountSubscribe",
+    "method": "eth_subscribe",
     "params": [
-      "ETpuBkvW1pX4VtT46AZbgXZMpAK8AUQsjNWtZxDAe7M3",  // Replace with the leader wallet's public key in base58 encoding
-      {"encoding": "jsonParsed"}
+      "logs", 
+      {
+        "address": "0xYourLeaderWalletAddress", // Replace with the leader wallet address
+        "topics": [] // Optional: Filter for specific event topics (empty array for all logs)
+      }
     ]
   });
 
-  ws.send(subscribeToAccount);
+  ws.send(subscribeToLogs);
 };
 
 ws.onmessage = (event) => {
-  const { result, method } = JSON.parse(event.data);
+  const data = JSON.parse(event.data);
 
-  if (method === "accountNotification") {
-    const { value } = result;
-    console.log("Notification for account:", value);
-    // Add your logic here to handle the change notification
-    // For example, checking the account's transaction history and replicating the trades
-  } else if (method === "subscription") {
-    const { subscription } = result;
-    console.log("Subscribed to account with subscription ID:", subscription);
-    // Store this subscription ID if you need to unsubscribe later
+  // Check for subscription confirmations or new logs
+  if (data.method === "eth_subscription") {
+    const log = data.params.result;
+    console.log("Log received for the account:", log);
+
+    // Add your logic here to handle changes in the account's state, such as transactions
+    // For example, you can check if a new transaction was made and replicate it.
+  } else if (data.result && data.id === 1) {
+    console.log("Successfully subscribed with subscription ID:", data.result);
+    // Store this subscription ID if needed for later unsubscribe
   }
 };
 
@@ -41,9 +46,9 @@ ws.onclose = () => {
 ws.onerror = (error) => {
   console.error('WebSocket encountered an error:', error);
 };
-// background.js (service worker)
+
+// Service Worker for Chrome Extension
 chrome.runtime.onInstalled.addListener(() => {
-    console.log('Service worker activated by onInstalled event.');
-    // Additional installation logic here...
-  });
-  
+  console.log('Service worker activated by onInstalled event.');
+  // Additional installation logic here if necessary
+});
